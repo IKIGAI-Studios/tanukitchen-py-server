@@ -1,5 +1,5 @@
 # Obtener la base de datos
-from bd.get_db import get_database
+from .connection import get_database
 
 tanukitchenDB = get_database()
 

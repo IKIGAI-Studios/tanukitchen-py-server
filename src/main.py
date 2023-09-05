@@ -1,6 +1,35 @@
 # coding: utf-8
 from constants.constants import SERVER_TOPICS, CLIENT_TOPICS
 from mqtt.client import client
+from modules.kitchen import Kitchen
+from modules.scale import Scale
+from modules.stove import Stove
+from modules.smoke import Smoke
+from modules.extractor import Extractor
+
+from decouple import config
+
+# Crear cocina
+TANUKITCHEN_ID = config("TANUKITCHEN_ID")
+kitchen = Kitchen(TANUKITCHEN_ID)
+
+# Crear módulos
+scale = object
+stove = object
+smoke_detector = object
+extractor = object
+
+# Inicializar módulos
+for module in kitchen.modules:
+    if module["name"] == "scale":
+        scale = Scale(module["_id"])
+    elif module["name"] == "stove":
+        stove = Stove(module["_id"])
+    elif module["name"] == "smoke_detector":
+        smoke_detector = Smoke(module["_id"])
+    elif module["name"] == "extractor":
+        extractor = Extractor(module["_id"])
+
 
 # setting callbacks for different events to see if it works, print the message etc.
 def on_connect(client, userdata, flags, rc, properties=None):
@@ -18,20 +47,23 @@ def on_subscribe(client, userdata, mid, granted_qos, properties=None):
 def on_message(client, userdata, msg):
     if (msg.topic == SERVER_TOPICS["stove_action"]):
         print("stove_action: " + str(msg.payload))
-        client.publish(CLIENT_TOPICS["stove_action"], payload=msg.payload, qos=1)
+        stove.processAction(str(msg.payload))
 
     elif (msg.topic == SERVER_TOPICS["smoke_action"]):
         print("smoke_action: " + str(msg.payload))
-        client.publish(CLIENT_TOPICS["smoke_action"], payload=msg.payload, qos=1)
+        smoke_detector.processAction(str(msg.payload))
 
     elif (msg.topic == SERVER_TOPICS["weight_action"]):
         print("weight_action: " + str(msg.payload))
-        client.publish(CLIENT_TOPICS["weight_action"], payload=msg.payload, qos=1)
+        scale.processAction(str(msg.payload))
+
+    elif (msg.topic == SERVER_TOPICS["extractor_action"]):
+        print("weight_action: " + str(msg.payload))
+        extractor.processAction(str(msg.payload))
+
 
     elif (msg.topic == SERVER_TOPICS["stove_value"]):
         print("stove_value: " + str(msg.payload))
-        # set stove value to value recieved
-        
     
     elif (msg.topic == SERVER_TOPICS["smoke_value"]):
         print("smoke_value: " + str(msg.payload))
@@ -50,4 +82,11 @@ client.on_subscribe = on_subscribe
 client.on_message = on_message
 client.on_publish = on_publish
 
-client.loop_forever()
+#client.loop_forever()
+
+# Lectura de datos
+while True:
+    scale.readValue()
+    stove.readValue()
+    smoke_detector.readValue()
+    extractor.readValue()
