@@ -1,4 +1,5 @@
 # coding: utf-8
+import time
 from constants.constants import SERVER_TOPICS, CLIENT_TOPICS
 from mqtt.client import client
 from modules.kitchen import Kitchen
@@ -82,11 +83,16 @@ client.on_subscribe = on_subscribe
 client.on_message = on_message
 client.on_publish = on_publish
 
-#client.loop_forever()
+def _process():
+    while True:
+        scale.readValue()
+        stove.readValue()
+        smoke_detector.readValue()
+        time.sleep(0.5)
+
+
+
+_process()
+client.loop_forever()
 
 # Lectura de datos
-while True:
-    scale.readValue()
-    stove.readValue()
-    smoke_detector.readValue()
-    extractor.readValue()

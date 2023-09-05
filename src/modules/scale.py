@@ -8,7 +8,7 @@ class Scale(Module):
         code = "HX711"
         collection = "scaleregs"
         mqtt_topic = CLIENT_TOPICS["weight_value"]
-        mqtt_action = CLIENT_TOPICS["stove_action"]
+        mqtt_action = CLIENT_TOPICS["weight_action"]
 
         super().__init__(id, name, code, collection, mqtt_topic, mqtt_action)
     
