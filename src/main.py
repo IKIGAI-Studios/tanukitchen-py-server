@@ -1,6 +1,6 @@
 # coding: utf-8
 import time
-from constants.constants import SERVER_TOPICS, CLIENT_TOPICS
+from constants.constants import SERVER_TOPICS
 from mqtt.client import client
 from modules.kitchen import Kitchen
 from modules.scale import Scale
@@ -46,34 +46,37 @@ def on_subscribe(client, userdata, mid, granted_qos, properties=None):
 
 # print message, useful for checking if it was successful
 def on_message(client, userdata, msg):
+    
+    command = str(msg.payload.decode("utf-8"))
+    
     if (msg.topic == SERVER_TOPICS["stove_action"]):
-        print("stove_action: " + str(msg.payload))
-        stove.processAction(str(msg.payload))
+        print("stove_action: " + command)
+        stove.processAction(command)
 
     elif (msg.topic == SERVER_TOPICS["smoke_action"]):
-        print("smoke_action: " + str(msg.payload))
-        smoke_detector.processAction(str(msg.payload))
+        print("smoke_action: " + command)
+        smoke_detector.processAction(command)
 
     elif (msg.topic == SERVER_TOPICS["weight_action"]):
-        print("weight_action: " + str(msg.payload))
-        scale.processAction(str(msg.payload))
+        print("weight_action: " + command)
+        scale.processAction(command)
 
     elif (msg.topic == SERVER_TOPICS["extractor_action"]):
-        print("weight_action: " + str(msg.payload))
-        extractor.processAction(str(msg.payload))
+        print("extractor_action: " + command)
+        extractor.processAction(command)
 
 
     elif (msg.topic == SERVER_TOPICS["stove_value"]):
-        print("stove_value: " + str(msg.payload))
+        print("stove_value: " + command)
     
     elif (msg.topic == SERVER_TOPICS["smoke_value"]):
-        print("smoke_value: " + str(msg.payload))
+        print("smoke_value: " + command)
     
     elif (msg.topic == SERVER_TOPICS["weight_value"]):
-        print("weight_value: " + str(msg.payload))
+        print("weight_value: " + command)
     
     else:
-        print("Unknown topic: " + str(msg.topic) + " Message: " + str(msg.payload))
+        print("Unknown topic: " + str(msg.topic) + " Message: " + command)
 
 
 
@@ -83,16 +86,17 @@ client.on_subscribe = on_subscribe
 client.on_message = on_message
 client.on_publish = on_publish
 
+
+
+# Lectura de datos
 def _process():
     while True:
+        client.loop()
         scale.readValue()
         stove.readValue()
         smoke_detector.readValue()
         time.sleep(0.5)
 
 
-
 _process()
-client.loop_forever()
 
-# Lectura de datos

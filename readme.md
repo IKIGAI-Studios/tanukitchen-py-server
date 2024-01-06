@@ -7,5 +7,8 @@
 ## Serial
 ```pip install serial```
 
+## MQTT
+```pip install paho-mqtt```
+
 ## MongoDB
 ```python -m pip install "pymongo[srv]"```

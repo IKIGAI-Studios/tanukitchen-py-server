@@ -2,8 +2,9 @@
 import bd.module_controller as module_controller
 from bson.objectid import ObjectId
 from datetime import datetime
-from utils.get_arduino_value import getValueFromArduino
+#from utils.get_arduino_value import getValueFromArduino
 from mqtt.client import client
+from random import Random
 
 #sudo apt-get update
 #sudo apt-get install rpi.gpio
@@ -27,25 +28,36 @@ class Module:
     
     # Función para override
     def readValue(self):
-        self.value = getValueFromArduino(self.code)
-        self.mqtt_client.publish(self.mqtt_topic, payload=self.value, qos=1)
-        self.insertValue(self.value)
+
+        prev_value = self.value
+        # Obtener valor de arduino
+        # self.value = getValueFromArduino(self.code)
+        self.value = 10
+
+        # si el valor previo es igual al valor de la lectura actual, no publicar
+        if prev_value != self.value:
+            self.mqtt_client.publish(self.mqtt_topic, payload=self.value, qos=1, retain=True)
+            self.insertValue(self.value)
     
     # Encender módulo
     def turnOn(self):
         self.updateModule("active", True)
-        self.mqtt_client.publish(self.mqtt_action, payload="ON", qos=1)
+        self.mqtt_client.publish(self.mqtt_action, payload="ON", qos=1, retain=True)
     
     # Apagar módulo
     def turnOff(self):
         self.updateModule("active", False)
-        self.mqtt_client.publish(self.mqtt_action, payload="OFF", qos=1)
+        self.mqtt_client.publish(self.mqtt_action, payload="OFF", qos=1, retain=True)
     
     def processAction(self, action):
         if action == "ON":
+            print("modulo prendido")
             self.turnOn()
         elif action == "OFF":
+            print("modulo apagado")
             self.turnOff()
+        else:
+            print("accion no reconocida")
 
     # Obtener datos del módulo
     def getData(self):
@@ -87,19 +99,4 @@ class Module:
                 "value": value
             }
         )
-
-    # Leer valores desde arduino
-    # def getValueFromArduino(self, name):
-    #     line = self.serial.readline().decode('utf-8').rstrip()
-        
-    #     # Dividir la línea de datos en las partes correspondientes
-    #     parts = line.split('|')
-
-    #     for part in parts:
-            
-    #         if part.find(name) != -1:
-    #             var = part.split(':')
-
-    #             # Recuperar valor del módulos
-    #             self.value = float(var[1])
            

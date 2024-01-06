@@ -24,6 +24,7 @@ def update(collection, filterDict, updDict):
         }
     )
 
+
 # Meter un elemento a un arreglo
 def push(collection, filterDict, array, elements, pos):
     _getCollection(collection).update_one(
