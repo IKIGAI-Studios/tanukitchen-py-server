@@ -2,7 +2,7 @@
 import bd.module_controller as module_controller
 from bson.objectid import ObjectId
 from datetime import datetime
-#from utils.get_arduino_value import getValueFromArduino
+from utils.get_arduino_value import getValueFromArduino
 from mqtt.client import client
 from random import Random
 
@@ -31,8 +31,8 @@ class Module:
 
         prev_value = self.value
         # Obtener valor de arduino
-        # self.value = getValueFromArduino(self.code)
-        self.value = 10
+        self.value = getValueFromArduino(self.code)
+        # self.value = 10
 
         # si el valor previo es igual al valor de la lectura actual, no publicar
         if prev_value != self.value:
