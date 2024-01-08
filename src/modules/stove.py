@@ -11,7 +11,7 @@ class Stove(Module):
         mqtt_topic = CLIENT_TOPICS["stove_value"]
         mqtt_action = CLIENT_TOPICS["stove_action"]
         self.time_usage = {}
-        self.pin = 25
+        self.pin = 23
 
         super().__init__(id, name, code, collection, mqtt_topic, mqtt_action)
     
