@@ -24,6 +24,7 @@ class Extractor(Module):
         GPIO.setup(self.pin, GPIO.OUT)
         super().turnOn()
         GPIO.output(self.pin, GPIO.HIGH)
+        GPIO.cleanup()
 
     
     def turnOff(self):
@@ -31,5 +32,6 @@ class Extractor(Module):
         GPIO.setup(self.pin, GPIO.OUT)
         super().turnOff()
         GPIO.output(self.pin, GPIO.LOW)
+        GPIO.cleanup()
 
     

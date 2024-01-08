@@ -24,6 +24,7 @@ class Stove(Module):
         GPIO.setup(self.pin, GPIO.OUT)
         super().turnOn()
         GPIO.output(self.pin, GPIO.HIGH)
+        GPIO.cleanup()
 
     
     def turnOff(self):
@@ -31,4 +32,5 @@ class Stove(Module):
         GPIO.setup(self.pin, GPIO.OUT)
         super().turnOff()
         GPIO.output(self.pin, GPIO.LOW)
+        GPIO.cleanup()
     
